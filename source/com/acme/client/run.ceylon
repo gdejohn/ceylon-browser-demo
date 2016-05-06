@@ -12,20 +12,21 @@ shared void run() {
             dynamic input = document.getElementById("task");
             dynamic {
                 task.textContent = input.\ivalue;
+                input.\ivalue = null;
             }
-            value tasks {
-                if (exists tasks = document.getElementById("tasks")) {
-                    return tasks;
+            value delete = document.createElement("button");
+            delete.textContent = "Delete";
+            delete.addEventListener(
+                "click",
+                object satisfies EventListener {
+                    handleEvent(Event event) => task.remove();
                 }
-                else {
-                    value tasks = document.createElement("ol");
-                    tasks.id = "tasks";
-                    assert (exists todos = document.getElementById("todos"));
-                    todos.appendChild(tasks);
-                    return tasks;
-                }
+            );
+            task.appendChild(delete);
+            document.getElementById("tasks")?.appendChild(task);
+            dynamic {
+                input.focus();
             }
-            tasks.appendChild(task);
         }
     };
     document.getElementById("add")?.addEventListener("click", listener);

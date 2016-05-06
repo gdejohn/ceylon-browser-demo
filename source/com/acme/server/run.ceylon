@@ -2,16 +2,17 @@ import ceylon.html {
     renderTemplate,
     Body,
     Button,
-    Div,
-    Doctype,
+    Doctype {html5},
     Head,
     Html,
     Input,
     Meta,
-    MimeType,
+    MimeType {textJavascript},
+    Ol,
     Script,
     Title
 }
+import ceylon.net.http {get}
 import ceylon.net.http.server {
     newServer,
     startsWith,
@@ -19,17 +20,14 @@ import ceylon.net.http.server {
     Endpoint
 }
 import ceylon.net.http.server.endpoints {
-    RepositoryEndpoint,
-    serveStaticFile
-}
-import ceylon.net.http {
-    get
+    serveStaticFile,
+    RepositoryEndpoint
 }
 
 "Run the module `com.acme.server`."
 shared void run() {
     value index = Html {
-        doctype = Doctype.html5;
+        doctype = html5;
         lang = "en";
         Head {
             Meta {
@@ -45,14 +43,14 @@ shared void run() {
                 id = "add";
                 "Add"
             },
-            Div {
-                id ="todos";
+            Ol {
+                id ="tasks";
             },
             Script {
                 src = "require.js";
             },
             Script {
-                type = MimeType.textJavascript;
+                type = textJavascript;
                 "require.config({
                      baseUrl : 'modules'
                  });
@@ -72,10 +70,9 @@ shared void run() {
         get
     };
     value todo = Endpoint {
-        path = startsWith("/");
-        service = (req, res) {
-            renderTemplate(index, res.writeString);
-        };
+        startsWith("/");
+        (_, response) => renderTemplate(index, response.writeString);
+        get
     };
     newServer {modules, static, todo}.start();
 }
